@@ -1,0 +1,12 @@
+---
+- name: Pull and run the application container
+  docker_container:
+    name: my_python_app
+    image: "{{ docker_image | default('kozovyi/kozovyi:latest') }}"
+    state: started
+    restart_policy: always
+    pull: true
+    networks:
+      - name: app_net
+    ports:
+      - "5000:5000"

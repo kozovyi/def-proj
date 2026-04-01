@@ -1,0 +1,7 @@
+---
+- name: Deploy application
+  hosts: app
+  become: yes
+  roles:
+    - docker_common
+    - app

@@ -1,0 +1,27 @@
+---
+- name: Remove conflicting docker packages
+  apt:
+    name:
+      - containerd.io
+      - docker-ce
+      - docker-ce-cli
+    state: absent
+
+- name: Install Docker Engine & Docker Python SDK
+  apt:
+    name:
+      - docker.io
+      - python3-docker
+    state: present
+    update_cache: yes
+
+- name: Enable and start Docker service
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Ensure application Docker network exists
+  docker_network:
+    name: app_net
+    state: present
