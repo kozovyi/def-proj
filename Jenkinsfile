@@ -36,7 +36,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh """
                             ssh -o StrictHostKeyChecking=no vagrant@${DOCKER_HOST_IP} \
-                            'cd /home/vagrant/shared-terraform/ansible-lab-11 && \
+                            'cd /home/vagrant/shared-terraform/ansible-lab-11/ansible && \
                              /home/vagrant/.local/bin/ansible-playbook -i inventory/hosts.ini playbook.yml \
                              -e "docker_image=${DOCKER_USER}/${IMAGE_NAME}:latest" \
                              -e "docker_user=${DOCKER_USER}" \
