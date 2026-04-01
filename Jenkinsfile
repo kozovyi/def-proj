@@ -31,16 +31,18 @@ pipeline {
 
         stage('Deploy via Host Ansible') {
             steps {
-                echo 'Connecting to host to run Ansible...'
+                echo 'Syncing files and running Ansible...'
                 sshagent(["${HOST_SSH_CREDS_ID}"]) {
                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDS_ID}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh """
+                            scp -o StrictHostKeyChecking=no -r ansible/ vagrant@${DOCKER_HOST_IP}:/home/vagrant/ansible-deploy
+
                             ssh -o StrictHostKeyChecking=no vagrant@${DOCKER_HOST_IP} \
-                            'cd /home/vagrant/shared-terraform/ansible-lab-11/ansible && \
-                             /home/vagrant/.local/bin/ansible-playbook -i inventory/hosts.ini playbook.yml \
-                             -e "docker_image=${DOCKER_USER}/${IMAGE_NAME}:latest" \
-                             -e "docker_user=${DOCKER_USER}" \
-                             -e "docker_pass=${DOCKER_PASS}"'
+                            'cd /home/vagrant/ansible-deploy && \
+                            /home/vagrant/.local/bin/ansible-playbook -i hosts.ini playbook.yml \
+                            -e "docker_image=${DOCKER_USER}/${IMAGE_NAME}:latest" \
+                            -e "docker_user=${DOCKER_USER}" \
+                            -e "docker_pass=${DOCKER_PASS}"'
                         """
                     }
                 }
